@@ -7,7 +7,7 @@ from time import sleep
 sleep(0.1)
 
 # File name of the script to import
-file_name = "traffic_light"
+file_name = "im4yearsold"
 
 # Add the path to the sys.path
 sys.path.append("/py_scripts")
