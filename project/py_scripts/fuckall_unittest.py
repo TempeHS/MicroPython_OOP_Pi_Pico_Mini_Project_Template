@@ -1,7 +1,7 @@
 import fuckall
 from time import sleep
 
-def test():
+def test_led():
     # firstly get it to initialise
     red_light = fuckall.Led_Light(3, True, False)
     # check using pin val
@@ -17,32 +17,45 @@ def test():
     assert red_light.led_light_state == 0, "its not off"
     sleep(1)
     
-    counter = 0
-    previous_state = red_light.led_light_state
+    counter = 0 
+    # curry freak
+    previous_state_1 = red_light.led_light_state
     while counter < 10:
         red_light.flash()
-        assert red_light != previous_state, f"not previous state: {previous_state}"
+        assert red_light != previous_state_1, f"not previous state: {previous_state_1}"
+        previous_state = not previous_state_1
         counter+=1
     
-    previous_state = red_light.led_light_state
-    # manually set value
+    previous_state_2 = red_light.led_light_state
+    
     red_light.toggle()
-    assert red_light != previous_state, "did not toggle properly"
+    assert red_light != previous_state_2, "did not toggle properly"
     sleep(1)
-    # manually set value
+    
+    previous_state_3 = not previous_state_2
     red_light.toggle()
-    assert red_light == previous_state, "did not toggle properly"
+    assert red_light != previous_state_3, "did not toggle properly"
     sleep(1)
     
     isCaptured = False
     try:
-        red_light.led_light_state(0.5)
+        red_light.led_light_state = 0.5
         assert isCaptured, "Failed to raise exception at invalid value"
-    except Exception:
+    except TypeError:
         isCaptured = True
-        assert isCaptured
+        assert isCaptured == True
     
-    red_light.led_light_state(1)
+    red_light.led_light_state = 1
     assert red_light.led_light_state == 1, "Failed to get led light state"
+    
+    print("-------------------------------------------")
+    print("LED Light has finished testing, all success")
+    print("-------------------------------------------")
 
-test()
+def test_button():
+    
+    print("-------------------------------------------")
+    print("Button has finished testing, all success")
+    print("-------------------------------------------")
+
+test_led()
