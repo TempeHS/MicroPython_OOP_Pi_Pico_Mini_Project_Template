@@ -1,56 +1,26 @@
 # Lecture 4
 
 ## Lecture 4 Concepts
-- Implement an advanced button
-- Implement audio notification class
 
+- [Pedestrian_Button Class](#pedestrian_button-class)
+    - [Create Files](#create-files)
+    - [Imports and Constructor](#imports-and-constructor)
+    - [Implement an Interrupt](#implement-an-interrupt)
+    - [Getter and Setter](#getter-and-setter)
+    - [Create a Callback Method for the Interrupt Trigger](#create-a-callback-method-for-the-interrupt-trigger)
 
-## Advanced Button (with Debouncing and Interrupt)
+## Pedestrian_Button Class
 
-The `Pedestrian_Button` class extends the `machine.Pin` class to provide a debounced, interrupt-driven interface for a pedestrian button, with optional debug output.
+The Pedestrian_Button class extends the Pin class to provide a debounced button interface specifically designed for pedestrian crossing systems. It uses interrupt-based detection and software debouncing to reliably capture button presses. It also provides optional debug output.
 
-### Constructor
+### Create Files
 
-```python
-Pedestrian_Button(pin, debug=False)
-```
-- `pin`: The GPIO pin number the button is connected to.
-- `debug`: Set to `True` to enable debug print statements.
+1. Create a Python file in `project\lib` called `pedestrian_button.py`
+2. Create a Python file in `project\py_scripts` called `v05.py`
 
-### Example Usage
+### Imports and Constructor
 
-```python
-from pedestrian_button import Pedestrian_Button
-import time
-
-# Create a Pedestrian_Button on GPIO pin 14 with debug enabled
-button = Pedestrian_Button(22, debug=True)
-
-while True:
-    # Check if the button has been pressed (pedestrian waiting)
-    if button.button_state:
-        print("Pedestrian button pressed!")
-        # Reset the waiting state after handling
-        button.button_state = False
-    time.sleep(0.1)
-```
-
-### Methods and Properties
-
-- **button_state** (property)  
-  - Gets: Returns `True` if the button is pressed or has been pressed since last reset, `False` otherwise. Prints debug info if enabled.
-  - Sets: Allows manual reset of the internal waiting state.
-
-- **callback(pin)**  
-  Interrupt handler called on button press (rising edge). Handles debouncing and sets the waiting state.
-
----
-
-**Notes:**  
-- The button should be wired between the specified GPIO pin and GND.
-- The class uses the internal pull-down resistor and sets up an interrupt for rising edge detection.
-- Debouncing is handled in software (200ms).
-
+In your `pedestrian_button.py` include your imports, define the class and configure the initialiser with the parameters pin and debug. Add the required parameters to store time and hold state if the button has been pressed.
 
 ```python
 from machine import Pin
@@ -58,7 +28,7 @@ import time
 
 
 class Pedestrian_Button(Pin):
-    # child class inherits the parent 'Pin' class
+    # Sub Class inherits the Super 'Pin' 
 
     def __init__(self, pin, debug):
         super().__init__(pin, Pin.IN, Pin.PULL_DOWN)
@@ -66,25 +36,61 @@ class Pedestrian_Button(Pin):
         self.__pin = pin
         self.__last_pressed = 0  # Track the last time the button was pressed
         self.__pedestrian_waiting = False
-        self.button_state
         self.irq(
             trigger=Pin.IRQ_RISING, handler=self.callback
         )  # Set up interrupt on rising edge
+```
 
-    @property
-    def button_state(self):
-        if self.__debug:
-            print(
-                f"Button connected to Pin {self.__pin} is {'WAITING' if self.__pedestrian_waiting else 'NOT WAITING'}"
-            )
-        return self.__pedestrian_waiting
+### Implement an Interrupt
 
-    @button_state.setter
-    def button_state(self, value):
-        self.__pedestrian_waiting = value
-        if self.__debug:
-            print(f"Button state on Pin {self.__pin} set to {value}")
+An interrupt is a signal to the processor that an event needs immediate attention. Instead of constantly checking (polling) if something has happened, interrupts allow the system to be notified immediately when an event occurs.
 
+1. self.irq() is inherited from the Pin Class and stands for Interrupt Request.
+2. `trigger=Pin.IRQ_RISING` The interrupt will be triggered when the pin state changes from LOW (0) to HIGH (1).
+3. `handler=self.callback` The `self.callback` method will be executed whenever the button is pressed.
+
+```python
+class Pedestrian_Button(Pin):
+    # Sub Class inherits the Super 'Pin' 
+
+    def __init__(self, pin, debug):
+        super().__init__(pin, Pin.IN, Pin.PULL_DOWN)
+        self.irq(
+            trigger=Pin.IRQ_RISING, handler=self.callback
+        )  # Set up interrupt on rising edge
+```
+
+### Getter and Setter
+
+Our system has a design requirement that the button state is stored until the walk lights have been displayed. So, because we are not setting or getting the current state of the button as we did with the LED_Light Class, we will use an ad hoc method that updates the `__pedestrian_waiting` attribute.
+
+- If `button_state()` is called with no arguments, it returns the current state (getter).
+- If `button_state(bool)` is called with a boolean argument, it sets the state (setter).
+
+```python
+    def button_state(self, value=None):
+        if value is None:
+            # Getter
+            if self.__debug:
+                print(
+                    f"Button connected to Pin {self.__pin} is {'WAITING' if self.__pedestrian_waiting else 'NOT WAITING'}"
+                )
+            return self.__pedestrian_waiting
+        else:
+            self.__pedestrian_waiting = bool(
+                value
+            )  # Convert to boolean to ensure proper type
+            if self.__debug:
+                print(
+                    f"Button state on Pin {self.__pin} set to {self.__pedestrian_waiting}"
+                )
+```
+
+### Create a Callback Method for the Interrupt Trigger
+
+This `callback()` was configured in the attributes and will be executed in response to an interrupt call.
+
+```python
     def callback(self, pin):
         current_time = time.ticks_ms()  # Get the current time in milliseconds
         if (
@@ -94,87 +100,4 @@ class Pedestrian_Button(Pin):
             self.__pedestrian_waiting = True
             if self.__debug:
                 print(f"Button pressed on Pin {self.__pin} at {current_time}ms")
-```
-
-## Audio Notification
-
-The `Audio_Notification` class extends the `machine.PWM` class to provide an interface for controlling a piezo buzzer or speaker, with optional debug output. It supports warning beeps and custom tones.
-
-### Constructor
-
-```python
-Audio_Notification(pin, debug=False)
-```
-- `pin`: The GPIO pin number the buzzer is connected to.
-- `debug`: Set to `True` to enable debug print statements.
-
-### Example Usage
-
-```python
-from audio_notification import Audio_Notification
-import time
-
-# Create an Audio_Notification on GPIO pin 15 with debug enabled
-buzzer = Audio_Notification(27, debug=True)
-
-# Sound a warning beep (non-blocking, call repeatedly in your loop)
-buzzer.warning_on()
-
-# Turn off the buzzer
-buzzer.warning_off()
-
-# Make a custom beep: 2kHz for 1 second
-buzzer.beep(freq=2000, duration=1000)
-```
-
-### Methods
-
-- **warning_on()**  
-  Sounds a warning beep (500 Hz, 100 ms) if at least 0.5 seconds have passed since the last beep. Prints debug info if enabled.
-
-- **warning_off()**  
-  Turns off the buzzer and prints debug info if enabled.
-
-- **beep(freq=1000, duration=500)**  
-  Produces a beep at the specified frequency (Hz) and duration (ms).
-
----
-
-**Notes:**  
-- Use a passive piezo buzzer for best results with PWM.
-- The pin must support PWM output on your board.
-- Call `warning_on()` repeatedly in your main loop for periodic beeping.
-
-
-```python
-from machine import Pin, PWM
-from time import sleep, time
-
-
-class Audio_Notification(PWM):
-    def __init__(self, pin, debug=False):
-        super().__init__(Pin(pin))
-        self.__debug = debug
-        self.duty_u16(0)  # Start with buzzer off
-        self._last_toggle_time = time()
-
-    def warning_on(self):
-        if self.__debug:
-            print("Warning on")
-        now = time()
-        if now - self._last_toggle_time >= 0.5:
-            self.beep(freq=500, duration=100)
-            self._last_toggle_time = now
-
-    def warning_off(self):
-        if self.__debug:
-            print("Warning off")
-        self.duty_u16(0)  # Turn off sound
-
-    def beep(self, freq=1000, duration=500):
-        self.freq(freq)
-        self.duty_u16(32768)  # 50% duty cycle
-        sleep(duration / 1000)
-        self.duty_u16(0)  # Turn off after beep
-
 ```
