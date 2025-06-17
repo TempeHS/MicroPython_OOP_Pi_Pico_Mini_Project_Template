@@ -1,27 +1,41 @@
 from led_light import Led_Light
-from time import sleep
+from time import sleep, time
 
-led = Led_Light()(3, flashing=True, debug=True)
+led = Led_Light(3, True, True)
 
-print("Testing on()")
+# Testing on()
+print("Testing on() method")
 led.on()
-if led.value == 1:
-    print("On() passed")
 sleep(0.1)
+if led.value() == 1:
+    print("on() method passed")
+else:
+    print("on() method failed")
 
-print("Testing off()")
+# Testing off()
+print("Testing off() method")
 led.off()
-if led.value == 0:
-    print("Off() passed")
-
-print("Testing toggle()")
-led.toggle()
-if led.value == 1:
-    print("toggle() on passed")
 sleep(0.1)
-if led.value == 0:
-    print("toggle() off passed")
+if led.value() == 0:
+    print("off() method passed")
+else:
+    print("off() method failed")
 
-sleep(1)
-if led.value = 0:
-    print("toggle()")
+# Testing toggle()
+print("Testing toggle() method")
+led.toggle()
+sleep(0.1)
+if led.value() == 1:
+    print("toggle() on method passed")
+else:
+    print("toggle() on method failed")
+
+led.toggle()
+sleep(0.1)
+if led.value() == 0:
+    print("toggle() off method passed")
+else:
+    print("toggle() off method failed")
+
+# Testing led_light_state() getter
+print("Testing led_light_state() getter")
