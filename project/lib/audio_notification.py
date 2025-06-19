@@ -27,5 +27,5 @@ def warning_on(self):
 
 def warning_off(self):
     if self.__debug:
-        print("warning off")
+        print("Warning off")
     self.__duty_u16(0) # Turn off sound
