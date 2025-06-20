@@ -12,21 +12,21 @@ class TrafficLightSubsystem:
         
     def show_red(self):
         if self.__debug:
-            print('Traffis: Red ON')
+            print('Traffic: Red ON')
         self.__red.on()
         self.__amber.off()
         self.__green.off()
 
     def show_amber(self):
         if self.__debug:
-            print('Traffis: Amber ON')
+            print('Traffic: Amber ON')
         self.__red.off()
         self.__amber.on()
         self.__green.off()
 
     def show_green(self):
         if self.__debug:
-            print('Traffis: Green ON')
+            print('Traffic: Green ON')
         self.__red.off()
         self.__amber.off()
         self.__green.on()
