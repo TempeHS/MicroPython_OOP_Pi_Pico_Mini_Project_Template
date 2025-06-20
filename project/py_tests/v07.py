@@ -1,7 +1,7 @@
 from project.lib.led_light import Led_Light
 from project.lib.pedestrian_button import Pedestrian_Button
 from project.lib.audio_notification import Audio_Notification
-from project.lib.controller import TrafficLightSubsystem, PedestrianSubsystem
+from project.lib.controller import TrafficLightSubsystem
 from time import sleep
 
 led_pedestrian_red = Led_Light(19, False, True)

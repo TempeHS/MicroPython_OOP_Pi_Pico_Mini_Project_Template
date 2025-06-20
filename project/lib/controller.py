@@ -17,7 +17,7 @@ class TrafficLightSubsystem:
         self.__amber.off()
         self.__green.off()
     
-    def show_yellow(self):
+    def show_amber(self):
         if self.__debug:
             print("Traffic: Amber ON")
         self.__red.off()
