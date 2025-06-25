@@ -42,7 +42,7 @@ else:
     print("toggle() off method failed")
 sleep(2)
 
-# Testing led_light_state (getter)
+# Testing led_light_state getter
 print("Testing led_light_state (getter)")
 state = led.led_light_state
 sleep(1)
@@ -52,7 +52,7 @@ else:
     print("led_light_state (getter) failed")
 sleep(2)
 
-# Testing led_light_state (setter)
+# Testing led_light_state setter
 print("Testing led_light_state (setter)")
 set0 = led.led_light_state = 0
 set1 = led.led_light_state = 1

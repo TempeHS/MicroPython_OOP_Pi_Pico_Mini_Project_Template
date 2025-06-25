@@ -1,5 +1,5 @@
 from machine import Pin
-from time import time, ticks_ms, ticks_diff
+from time import time, ticks_ms, ticks_diff 
 
 class Pedestrian_Button(Pin):
     # Child class inherits the parent "Pin" class
