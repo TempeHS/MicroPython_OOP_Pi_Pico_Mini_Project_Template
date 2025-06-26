@@ -17,7 +17,7 @@ traffic_light = TrafficLightSubsystem(led_traffic_red, led_traffic_amber, led_tr
 pedestrian_light = PedestrianSubsystem(led_pedestrian_red, led_pedestrian_green, pedestrian_button, buzzer, True)
 
 def Traffic_Subsystem_Driver():
-    print("Testing Traffic Light In 5 Seconds")
+    print("Testing Controller")
     sleep(5)
     traffic_light.show_red()
     print("Pass If: Red ON, Amber OFF, Green OFF")

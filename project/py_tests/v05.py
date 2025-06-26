@@ -1,4 +1,4 @@
-from project.lib.pedestrian_button import Pedestrian_Button
+from pedestrian_button import Pedestrian_Button
 from time import time, ticks_ms, ticks_diff, sleep
 
 button = Pedestrian_Button(22, True)
