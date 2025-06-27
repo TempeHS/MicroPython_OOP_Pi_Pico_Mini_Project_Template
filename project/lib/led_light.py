@@ -3,7 +3,7 @@ from time import sleep, time
 
 class Led_Light(Pin):
     # Child class inherits the parent "Pin" class
-    def __init__(self, pin, flashing=False, debug=False):
+    def __init__(self, pin, flashing, debug):
         super().__init__(pin, Pin.OUT)
         self.led_light_state
         self.__debug = debug

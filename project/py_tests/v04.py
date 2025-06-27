@@ -1,13 +1,13 @@
 from led_light import Led_Light
 from time import sleep, time
 
-led = Led_Light(3, True, True)
+led = Led_Light(3, True, False)
 
-# Testing on() method
 print("Testing on() method")
 led.on()
 sleep(1)
-if led.value() == 1:
+input = print("Type '1' if LED is ON")
+if input == "1":
     print("on() method passed")
 else:
     print("on() method failed")
